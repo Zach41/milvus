@@ -50,16 +50,16 @@ const (
 
 func ServerTypeMap() map[string]interface{} {
 	return map[string]interface{}{
-		EmbeddedRole:   nil,
-		StandaloneRole: nil,
-		RootCoordRole:  nil,
-		ProxyRole:      nil,
-		QueryCoordRole: nil,
-		QueryNodeRole:  nil,
-		IndexCoordRole: nil,
-		IndexNodeRole:  nil,
-		DataCoordRole:  nil,
-		DataNodeRole:   nil,
+		// EmbeddedRole:   nil,
+		// StandaloneRole: nil,
+		// RootCoordRole:  nil,
+		// ProxyRole:      nil,
+		// QueryCoordRole: nil,
+		// QueryNodeRole:  nil,
+		// IndexCoordRole: nil,
+		IndexNodeRole: nil,
+		// DataCoordRole:  nil,
+		// DataNodeRole:   nil,
 	}
 }
 
