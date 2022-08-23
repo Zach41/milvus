@@ -1084,6 +1084,7 @@ func (t *DropIndexReqTask) Execute(ctx context.Context) error {
 	if err := t.core.MetaTable.MarkIndexDeleted(t.Req.CollectionName, t.Req.FieldName, t.Req.IndexName); err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -1142,7 +1143,11 @@ func (t *DropAliasReqTask) Execute(ctx context.Context) error {
 		return fmt.Errorf("meta table drop alias failed, error = %w", err)
 	}
 
-	return t.core.ExpireMetaCache(ctx, []string{t.Req.Alias}, InvalidCollectionID, ts)
+	if err := t.core.ExpireMetaCache(ctx, []string{t.Req.Alias}, InvalidCollectionID, ts); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // AlterAliasReqTask alter alias request task
@@ -1171,5 +1176,9 @@ func (t *AlterAliasReqTask) Execute(ctx context.Context) error {
 		return fmt.Errorf("meta table alter alias failed, error = %w", err)
 	}
 
-	return t.core.ExpireMetaCache(ctx, []string{t.Req.Alias}, InvalidCollectionID, ts)
+	if err := t.core.ExpireMetaCache(ctx, []string{t.Req.Alias}, InvalidCollectionID, ts); err != nil {
+		return nil
+	}
+
+	return nil
 }
