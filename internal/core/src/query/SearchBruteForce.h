@@ -21,6 +21,7 @@ SubSearchResult
 BruteForceSearch(const dataset::SearchDataset& dataset,
                  const void* chunk_data_raw,
                  int64_t chunk_rows,
-                 const BitsetView& bitset);
+                 const BitsetView& bitset,
+                 bool traced = false);
 
 }  // namespace milvus::query

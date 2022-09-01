@@ -53,6 +53,7 @@ struct SearchResult {
     }
 
  public:
+    // TODO add trace info
     int64_t total_nq_;
     int64_t unity_topK_;
     void* segment_;
@@ -60,6 +61,8 @@ struct SearchResult {
     // first fill data during search, and then update data after reducing search results
     std::vector<float> distances_;
     std::vector<int64_t> seg_offsets_;
+    std::string traced_data_;
+    std::vector<int64_t> traced_ids_;
 
     // fist fill data during fillPrimaryKey, and then update data after reducing search results
     std::vector<PkType> primary_keys_;

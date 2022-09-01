@@ -38,7 +38,8 @@ struct SearchInfo {
     int64_t topk_;
     int64_t round_decimal_;
     FieldId field_id_;
-    knowhere::MetricType metric_type_;
+    bool traced_;
+    knowhere::MetricType metric_type_;    
     knowhere::Config search_params_;
 };
 

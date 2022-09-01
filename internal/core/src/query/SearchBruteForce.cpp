@@ -11,9 +11,11 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "SearchBruteForce.h"
 #include "knowhere/archive/BruteForce.h"
+#include "knowhere/index/vector_index/adapter/VectorAdapter.h"
 
 namespace milvus::query {
 
@@ -21,12 +23,30 @@ SubSearchResult
 BruteForceSearch(const dataset::SearchDataset& dataset,
                  const void* chunk_data_raw,
                  int64_t chunk_rows,
-                 const BitsetView& bitset) {
+                 const BitsetView& bitset,
+                 bool traced) {
     SubSearchResult sub_result(dataset.num_queries, dataset.topk, dataset.metric_type, dataset.round_decimal);
     try {
-        knowhere::BruteForceSearch(dataset.metric_type, chunk_data_raw, dataset.query_data, dataset.dim, chunk_rows,
-                                   dataset.num_queries, dataset.topk, sub_result.get_seg_offsets(),
-                                   sub_result.get_distances(), bitset);
+        knowhere::DatasetPtr baseset  = std::make_shared<knowhere::Dataset>();
+        knowhere::DatasetPtr queryset = std::make_shared<knowhere::Dataset>();
+
+        baseset->Set(knowhere::meta::ROWS, chunk_rows);
+        baseset->Set(knowhere::meta::DIM, dataset.dim);
+        baseset->Set(knowhere::meta::TENSOR, chunk_data_raw);
+
+        queryset->Set(knowhere::meta::TENSOR, dataset.query_data);
+        queryset->Set(knowhere::meta::ROWS, dataset.num_queries);
+
+        knowhere::Config config;
+        knowhere::SetMetaMetricType(config, dataset.metric_type);
+        knowhere::SetMetaTopk(config, dataset.topk);
+        knowhere::SetMetaTraceVisit(config, true);
+
+        // dataset.
+        knowhere::DatasetPtr result = knowhere::BruteForce::Search(baseset, queryset, config, bitset);
+        std::copy_n(GetDatasetDistance(result), dataset.num_queries * dataset.topk, sub_result.get_distances());
+        std::copy_n( GetDatasetIDs(result), dataset.num_queries * dataset.topk, sub_result.get_seg_offsets());
+
     } catch (std::exception& e) {
         PanicInfo(e.what());
     }

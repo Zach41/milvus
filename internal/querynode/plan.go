@@ -136,7 +136,9 @@ func newSearchRequest(collection *Collection, req *querypb.SearchRequest, placeh
 		plan.delete()
 		return nil, err
 	}
-
+	if req.Req.GetTraced() {
+		C.SetTraceRecord(plan.cSearchPlan)
+	}
 	ret := &searchRequest{
 		plan:              plan,
 		cPlaceholderGroup: cPlaceholderGroup,

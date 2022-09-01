@@ -42,6 +42,12 @@ GetNumOfQueries(CPlaceholderGroup placeholder_group);
 int64_t
 GetTopK(CSearchPlan plan);
 
+bool
+IsTraced(CSearchPlan plan);
+
+void
+SetTraceRecord(CSearchPlan plan);
+
 CStatus
 GetFieldID(CSearchPlan plan, int64_t* field_id);
 

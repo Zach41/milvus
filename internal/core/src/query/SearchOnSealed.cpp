@@ -33,6 +33,7 @@ SearchOnSealed(const Schema& schema,
     auto round_decimal = search_info.round_decimal_;
 
     auto field_id = search_info.field_id_;
+    bool traced = search_info.traced_;
     auto& field = schema[field_id];
     // Assert(field.get_data_type() == DataType::VECTOR_FLOAT);
     auto dim = field.get_dim();
@@ -48,6 +49,7 @@ SearchOnSealed(const Schema& schema,
         auto conf = search_info.search_params_;
         knowhere::SetMetaTopk(conf, search_info.topk_);
         knowhere::SetMetaMetricType(conf, field_indexing->metric_type_);
+        knowhere::SetMetaTraceVisit(conf, traced);
         auto index_type = field_indexing->indexing_->index_type();
         auto adapter = knowhere::AdapterMgr::GetInstance().GetAdapter(index_type);
         try {
@@ -60,6 +62,7 @@ SearchOnSealed(const Schema& schema,
 
     auto ids = knowhere::GetDatasetIDs(final);
     float* distances = (float*)knowhere::GetDatasetDistance(final);
+    std::string tracing_data = knowhere::GetDatasetJsonInfo(final);
 
     auto total_num = num_queries * topk;
 
@@ -77,5 +80,6 @@ SearchOnSealed(const Schema& schema,
 
     std::copy_n(ids, total_num, result.seg_offsets_.data());
     std::copy_n(distances, total_num, result.distances_.data());
+    result.traced_data_ = std::move(tracing_data);
 }
 }  // namespace milvus::query

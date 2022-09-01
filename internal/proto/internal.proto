@@ -171,6 +171,7 @@ message SearchRequest {
   int64  nq = 14;
   int64  topk = 15;
   string metricType = 16;
+  bool traced = 17;
 }
 
 message SearchResults {
